@@ -1,0 +1,7 @@
+---
+
+adress: ":8080"
+trigger:
+  - route: "test"
+    executable: "ls -lsa"
+    checkExecutable: false
