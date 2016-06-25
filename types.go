@@ -12,7 +12,8 @@ type configDocument struct {
 }
 
 type triggerResult struct {
-	Status bool `json:"status"`
+	Status bool   `json:"status"`
+	Msg    string `json:"msg"`
 }
 
 type logResult struct {

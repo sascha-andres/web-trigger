@@ -17,10 +17,14 @@ func (m triggerElement) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if m.CheckExecutable {
 				if _, err := os.Stat(m.Executable); os.IsNotExist(err) {
 					log.Println("Executable not found")
+					if j, err := json.Marshal(triggerResult{true, "Executable not found"}); err == nil {
+						w.Write(j)
+					}
+					return
 				}
 			}
 			go execDeffered(m.Executable, m)
-			if j, err := json.Marshal(triggerResult{true}); err == nil {
+			if j, err := json.Marshal(triggerResult{true, ""}); err == nil {
 				w.Write(j)
 			}
 		} else {
@@ -28,8 +32,12 @@ func (m triggerElement) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				if j, err := json.Marshal(logResult{true, val}); err == nil {
 					w.Write(j)
 				}
+			} else {
+				w.WriteHeader(404)
 			}
 		}
+	} else {
+		w.WriteHeader(500)
 	}
 }
 
