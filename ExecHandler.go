@@ -43,12 +43,21 @@ func (m triggerElement) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func execDeffered(executable string, route triggerElement) {
 	splitted := strings.SplitN(executable, " ", 2)
-	cmd := exec.Command(splitted[0], splitted[1])
-	out, err := cmd.Output()
+	var cmd *exec.Cmd
+	if len(splitted) == 2 {
+		cmd = exec.Command(splitted[0], splitted[1])
+	} else {
+		if len(splitted) == 1 {
+			cmd = exec.Command(splitted[0])
+		} else {
+			logs[route.Route] = "Not able to execute"
+			return
+		}
+	}
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Waiting for command to finish...")
 	log.Printf("Command finished with error: %v", err)
 	logs[route.Route] = string(out)
 }
